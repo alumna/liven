@@ -164,8 +164,8 @@ describe('Liven tests', () => {
 		await write( file, content );
 
 		const to_delete = 'test/06/delete_test'
-		fs.closeSync( fs.openSync( to_delete, 'w' ) );
-		await write( to_delete, 'delete test', 'utf8' );
+		// fs.closeSync( fs.openSync( to_delete, 'w' ) );
+		// await write( to_delete, 'delete test', 'utf8' );
 
 		await sleep( 90 )
 
