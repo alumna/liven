@@ -6,6 +6,9 @@
 	<a href="https://npmjs.org/package/@alumna/liven">
 		<img src="https://badgen.now.sh/npm/v/@alumna/liven" alt="version" />
 	</a>
+	<a href="https://npmjs.org/package/@alumna/liven">
+		<img src="https://badgen.net/bundlephobia/min/@alumna/liven" alt="size" />
+	</a>
 	<a href="https://travis-ci.org/alumna/liven">
 		<img src="https://travis-ci.org/alumna/liven.svg?branch=master" alt="travis" />
 	</a>
