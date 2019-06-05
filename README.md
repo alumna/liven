@@ -48,6 +48,14 @@ $ npm install @alumna/liven
 
 ## Usage
 
+Add the reloader script on the main html file of your project:
+```html
+<script>
+	(new WebSocket("ws://"+((location.host||"localhost").split(":")[0]+(location.port?":"+location.port:"")))).onmessage=function(){return location.reload(!0)};
+</script>
+```
+
+And start your instance:
 ```js
 import liven from '@alumna/liven';
 
