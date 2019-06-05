@@ -27,7 +27,8 @@
 * Extremely lightweight - 55kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
-* Fully tested on Linux, Mac and Windows
+* Fully tested on Linux and Windows
+* Partially tested on Mac (contributions welcome!)
 
 Additionally, this module is delivered as:
 
@@ -74,4 +75,7 @@ const instance = await liven({
 
 // You can programatically force a refresh as well
 instance.refresh({ path, isDir, isFile, add_or_update, isNew })
+
+// And get the port used
+console.log( instance.port ) // 3000
 ```
