@@ -1,0 +1,71 @@
+{
+	"name": "@alumna/liven",
+	"version": "1.0.0",
+	"description": "Optimized and lightweight live reload library, without dependencies",
+	"main": "dist/liven.cjs.js",
+	"module": "dist/liven.es.js",
+	"scripts": {
+		"build": "rollup --config rollup/cjs.js && rollup --config rollup/es.js",
+		"prepare": "npm run build",
+		"test": "jest --coverage --forceExit --detectOpenHandles --runInBand"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/alumna/liven.git"
+	},
+	"keywords": [
+		"live",
+		"reload",
+		"live reload",
+		"browser sync",
+		"browser",
+		"sync",
+		"tiny",
+		"small"
+	],
+	"author": "Paulo Coghi",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/alumna/liven/issues"
+	},
+	"homepage": "https://github.com/alumna/liven",
+	"jest": {
+		"coverageDirectory": "./coverage/",
+		"collectCoverage": true,
+		"collectCoverageFrom": [
+			"**/src/**",
+			"!**/dist/**",
+			"!**/node_modules/**",
+			"!**/rollup/**"
+		],
+		"preset": "jest-puppeteer",
+		"verbose": true
+	},
+	"devDependencies": {
+		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+		"bufferutil": "^4.0.1",
+		"cheap-watch": "^1.0.2",
+		"get-port": "^5.0.0",
+		"jest": "^24.8.0",
+		"jest-puppeteer": "^4.2.0",
+		"local-access": "^1.0.1",
+		"puppeteer": "^1.17.0",
+		"rollup": "^1.13.0",
+		"rollup-plugin-commonjs": "^10.0.0",
+		"rollup-plugin-node-resolve": "^5.0.1",
+		"rollup-plugin-terser": "^5.0.0",
+		"sirv": "^0.4.2",
+		"utf-8-validate": "^5.0.2",
+		"ws": "^7.0.0"
+	},
+	"dependencies": {},
+	"babel": {
+		"env": {
+			"test": {
+				"plugins": [
+					"transform-es2015-modules-commonjs"
+				]
+			}
+		}
+	}
+}

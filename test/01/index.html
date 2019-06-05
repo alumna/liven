@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Old title</title></head>
+<body></body>
+<script>
+	const liven = {}
+	const url   = ( location.host || 'localhost' ).split( ':' )[ 0 ] + ( location.port ? ':' + location.port : '' )
+
+	liven.r = data => {
+		location.reload( true )
+	}
+
+	liven.ws = new WebSocket( 'ws://' + url )
+
+	liven.ws.onmessage = event => {
+		liven.r( event.data )
+	}
+</script>
+</html>
