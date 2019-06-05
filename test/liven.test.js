@@ -2,7 +2,6 @@ import liven from './../src/index';
 
 import * as fs 				from 'fs';
 
-const access  = fs.promises.access
 const open	  = fs.promises.open
 const read	  = fs.promises.readFile
 const unlink  = fs.promises.unlink
