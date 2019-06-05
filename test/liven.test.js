@@ -10,228 +10,234 @@ const write	  = fs.promises.writeFile
 
 const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
-test('1. Refresh when file change', async () => {
+describe('Liven tests', () => {
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/01/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	jest.setTimeout( 15000 );
 
-	await sleep( 1000 )
+	test('1. Refresh when file change', async () => {
 
-	const server  = await liven( { dir: 'test/01' } );
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/01/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/01' } );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } )
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	// Undo the changes
-	write( file, content );
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } )
 
-});
+		await expect( page.title()).resolves.toMatch( 'New title' );
 
-test('2. Refresh after "on_event" returning "true"', async () => {
+		// Undo the changes
+		write( file, content );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/02/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	await sleep( 1000 )
+	test('2. Refresh after "on_event" returning "true"', async () => {
 
-	const server  = await liven( { dir: 'test/02', on_event: () => true } );
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/02/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/02', on_event: () => true } );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } )
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	// Undo the changes
-	write( file, content );
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } )
 
-});
+		await expect( page.title()).resolves.toMatch( 'New title' );
 
-test('3. Do not refresh after "on_event" returning "false"', async () => {
+		// Undo the changes
+		write( file, content );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/03/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	await sleep( 1000 )
+	test('3. Do not refresh after "on_event" returning "false"', async () => {
 
-	const server  = await liven( { dir: 'test/03', on_event: () => false } );
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/03/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/03', on_event: () => false } );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port );
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	// Undo the changes
-	write( file, content );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-});
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-test('4. Refresh when file change, with a filter on watcher', async () => {
+		// Undo the changes
+		write( file, content );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/04/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	await sleep( 1000 )
+	test('4. Refresh when file change, with a filter on watcher', async () => {
 
-	const server  = await liven( { dir: 'test/04', filter: () => true } );
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/04/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/04', filter: () => true } );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } )
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	// Undo the changes
-	write( file, content );
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } )
 
-});
+		await expect( page.title()).resolves.toMatch( 'New title' );
 
-test('5. Current directory used when passing no parameters', async () => {
+		// Undo the changes
+		write( file, content );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/05/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	await sleep( 1000 )
+	test('5. Current directory used when passing no parameters', async () => {
 
-	const server  = await liven();
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/05/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await page.goto( 'http://localhost:' + server.port + '/test/05/' );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven();
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port + '/test/05/' );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } )
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	// Undo the changes
-	write( file, content );
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } )
 
-});
+		await expect( page.title()).resolves.toMatch( 'New title' );
 
-test('6. Refresh when a file is removed', async () => {
+		// Undo the changes
+		write( file, content );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/06/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	const to_delete = 'test/06/delete_test'
-	await open( to_delete, 'w' );
-	await write( to_delete, 'delete test', 'utf8' );
+	test('6. Refresh when a file is removed', async () => {
 
-	await sleep( 1000 )
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/06/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
+		const to_delete = 'test/06/delete_test'
+		await open( to_delete, 'w' );
+		await write( to_delete, 'delete test', 'utf8' );
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
-	// Generate a refresh deleting "delete_test"
-	await unlink( to_delete );
+		await page.goto( 'http://localhost:' + server.port );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } );
+		// Generate a refresh deleting "delete_test"
+		await unlink( to_delete );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	// Undo the changess
-	write( file, content );
-	write( to_delete, 'delete test', 'utf8' );
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } );
 
-});
+		await expect( page.title()).resolves.toMatch( 'New title' );
 
-test('7. Refresh when a file is created', async () => {
+		// Undo the changess
+		write( file, content );
+		write( to_delete, 'delete test', 'utf8' );
 
-	// If this test failed previously, lets guarantee that
-	// everything is correct again before we begin
-	const file    = 'test/07/index.html'
-	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-	await write( file, content );
+	});
 
-	// Delete the file "create_test" if it exists
-	const to_create = 'test/07/create_test'
+	test('7. Refresh when a file is created', async () => {
 
-	try {
-		await unlink( to_create );
-	} catch ( error ) {
-	    // continue
-	}
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'test/07/index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
 
-	await sleep( 1000 )
+		// Delete the file "create_test" if it exists
+		const to_create = 'test/07/create_test'
 
-	const server  = await liven( { dir: 'test/07', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
+		try {
+			await unlink( to_create );
+		} catch ( error ) {
+		    // continue
+		}
 
-	await page.goto( 'http://localhost:' + server.port );
+		await sleep( 1000 )
 
-	await expect( page.title()).resolves.toMatch( 'Old title' );
+		const server  = await liven( { dir: 'test/07', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
-	// Read and modify index.html to generate a refresh 
-	await write( file, content.replace( 'Old title', 'New title' ) );
+		await page.goto( 'http://localhost:' + server.port );
 
-	// Generate a refresh deleting "create_test"
-	await open( to_create, 'w' );
-	await write( to_create, 'create test', 'utf8' );
+		await expect( page.title()).resolves.toMatch( 'Old title' );
 
-	// Wait the page to refresh
-	await page.waitForNavigation( { waitUntil: 'load' } );
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
 
-	await expect( page.title()).resolves.toMatch( 'New title' );
+		// Generate a refresh deleting "create_test"
+		await open( to_create, 'w' );
+		await write( to_create, 'create test', 'utf8' );
 
-	// Undo the changess
-	write( file, content );
-	try {
-		await unlink( to_create );
-	} catch ( error ) {
-	    // continue
-	}
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } );
+
+		await expect( page.title()).resolves.toMatch( 'New title' );
+
+		// Undo the changess
+		write( file, content );
+		try {
+			await unlink( to_create );
+		} catch ( error ) {
+		    // continue
+		}
+
+	});
 
 });
