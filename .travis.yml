@@ -1,5 +1,6 @@
 os:
   - linux
+  - osx
 language: node_js
 install:
   - npm ci
