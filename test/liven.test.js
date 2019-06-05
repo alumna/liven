@@ -18,7 +18,7 @@ test('1. Refresh when file change', async () => {
 	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 	await write( file, content );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/01' } );
 
@@ -47,7 +47,7 @@ test('2. Refresh after "on_event" returning "true"', async () => {
 	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 	await write( file, content );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/02', on_event: () => true } );
 
@@ -76,7 +76,7 @@ test('3. Do not refresh after "on_event" returning "false"', async () => {
 	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 	await write( file, content );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/03', on_event: () => false } );
 
@@ -102,7 +102,7 @@ test('4. Refresh when file change, with a filter on watcher', async () => {
 	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 	await write( file, content );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/04', filter: () => true } );
 
@@ -131,7 +131,7 @@ test('5. Current directory used when passing no parameters', async () => {
 	const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 	await write( file, content );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven();
 
@@ -164,7 +164,7 @@ test('6. Refresh when a file is removed', async () => {
 	await open( to_delete, 'w' );
 	await write( to_delete, 'delete test', 'utf8' );
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -206,7 +206,7 @@ test('7. Refresh when a file is created', async () => {
 	    // continue
 	}
 
-	await sleep( 30 )
+	await sleep( 100 )
 
 	const server  = await liven( { dir: 'test/07', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
