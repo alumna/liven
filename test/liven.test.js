@@ -1,11 +1,12 @@
 import liven from './../src/index';
 
 import * as fs 				from 'fs';
+import { promisify } 		from 'util';
 
-const open	  = fs.promises.open
-const read	  = fs.promises.readFile
-const unlink  = fs.promises.unlink
-const write	  = fs.promises.writeFile
+const open	  = promisify( fs.open );
+const read	  = promisify( fs.readFile );
+const unlink  = promisify( fs.unlink );
+const write	  = promisify( fs.writeFile );
 
 const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
