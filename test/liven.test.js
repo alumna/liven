@@ -3,7 +3,6 @@ import liven from './../src/index';
 import * as fs 				from 'fs';
 import { promisify } 		from 'util';
 
-const open	  = promisify( fs.open );
 const read	  = promisify( fs.readFile );
 const unlink  = promisify( fs.unlink );
 const write	  = promisify( fs.writeFile );
@@ -12,7 +11,7 @@ const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
 describe('Liven tests', () => {
 
-	jest.setTimeout( 15000 );
+	jest.setTimeout( 10000 );
 
 	test('1. Refresh when file change', async () => {
 
@@ -22,7 +21,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/01' } );
 
@@ -51,7 +50,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/02', on_event: () => true } );
 
@@ -80,7 +79,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/03', on_event: () => false } );
 
@@ -106,7 +105,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/04', filter: () => true } );
 
@@ -135,7 +134,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven();
 
@@ -165,10 +164,10 @@ describe('Liven tests', () => {
 		await write( file, content );
 
 		const to_delete = 'test/06/delete_test'
-		await open( to_delete, 'w' );
+		fs.closeSync( fs.openSync( to_delete, 'w' ) );
 		await write( to_delete, 'delete test', 'utf8' );
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -210,7 +209,7 @@ describe('Liven tests', () => {
 		    // continue
 		}
 
-		await sleep( 1000 )
+		await sleep( 90 )
 
 		const server  = await liven( { dir: 'test/07', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -222,7 +221,7 @@ describe('Liven tests', () => {
 		await write( file, content.replace( 'Old title', 'New title' ) );
 
 		// Generate a refresh deleting "create_test"
-		await open( to_create, 'w' );
+		fs.closeSync( fs.openSync( to_create, 'w' ) );
 		await write( to_create, 'create test', 'utf8' );
 
 		// Wait the page to refresh
