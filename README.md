@@ -60,6 +60,12 @@ const instance = await liven({
 	// Port to use on the http server
 	// If it isn't available, the first available port between 3000 and 3100 will be used 
 	port: 3000,
+
+	// (OPTIONAL)
+	// Javascript function (as string) to be runned when refreshing the page
+	// Defaults to: 'function( data ){ location.reload( true ) };'
+	// `data` is an object: { path, isDir, isFile, isNew, add_or_update }
+	script: 'function( data ){ location.reload( true ) };'
 	
 	// (OPTIONAL)
 	// Function to be called on each event, before the refresh signal
