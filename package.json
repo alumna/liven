@@ -1,6 +1,6 @@
 {
 	"name": "@alumna/liven",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Optimized and lightweight live reload library, without dependencies",
 	"main": "dist/liven.cjs.js",
 	"module": "dist/liven.es.js",
