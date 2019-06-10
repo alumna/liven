@@ -1,25 +1,23 @@
 import CheapWatch 			from 'cheap-watch';
 import { createServer } 	from 'http';
 import getport				from 'get-port';
+import polka				from 'polka';
 import sirv					from 'sirv';
 import WebSocket			from 'ws';
 
+import * as fs 				from 'fs';
+
 class Liven {
 
-	constructor ( user_options ) {
+	constructor ( options ) {
 
-		this.options      = Object.assign( { dir: '.' }, user_options );
+		this.options = options
 
-		// http server
-		const sirv_server = sirv( this.options.dir, { dev: true } );
-		this.server       = createServer( sirv_server );
+		this.options.script = '<script>(new WebSocket("ws://"+(location.host))).onmessage=' + this.options.script + '</script>';
 
-		// Bind the socket server on the http one
-		this.ws           = new WebSocket.Server( { server: this.server } );
-		this.connections  = []
-
-		// Add every new connection to the pool
-		this.ws.on( 'connection', connection => this.connections.push( connection ) );
+		// http server binded to polka
+		this.polka          = polka( { server: createServer() } );
+		this.polka.use( this.inject(), sirv( this.options.dir, { dev: true } ) )
 
 	}
 
@@ -28,8 +26,15 @@ class Liven {
 		// Get an available port to run
 		this.port = await getport( { port: this.options.port || getport.makeRange( 3000, 3100 ) } );
 
-		// Start servers 
-		this.server.listen( this.port )
+		// Start servers
+		const { server, handler } = this.polka.listen( this.port )
+
+		// Bind the socket server on the http one
+		this.ws           = new WebSocket.Server( { server } );
+		this.connections  = []
+
+		// Add every new connection to the pool
+		this.ws.on( 'connection', connection => this.connections.push( connection ) );
 
 		// Asynchronously start the watcher
 		return this.watch()
@@ -65,6 +70,23 @@ class Liven {
 
 	}
 
+	inject () {
+
+		const options = this.options
+
+		return function ( req, res, next ) {
+
+			const index = options.dir + '/index.html';
+
+			if ( ! [ '/', '/index.html' ].includes( req.url ) || !fs.existsSync( index ) ) return next();
+
+			const content = fs.readFileSync( index , 'utf8' );
+			return res.end( content.replace( '<body>', '<body>' + options.script ) );
+
+		}
+
+	}
+
 	refresh ( data ) {
 
 		for ( let i = this.connections.length - 1; i >= 0; i-- ) {
@@ -78,9 +100,16 @@ class Liven {
 
 }
 
-export default async function ( user_options = {} ) {
+export default async function ( options = {} ) {
 
-	const instance = new Liven( user_options )
+	const minimal = {
+		dir: process.cwd(),
+		script: 'function( args ){ location.reload( true ) };'
+	}
+
+	Object.assign( minimal, options );
+
+	const instance = new Liven( minimal )
 
 	await instance.start();
 

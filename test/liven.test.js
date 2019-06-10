@@ -11,7 +11,7 @@ const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
 describe('Liven tests', () => {
 
-	jest.setTimeout( 10000 );
+	jest.setTimeout( 4000 );
 
 	test('1. Refresh when file change', async () => {
 
@@ -27,7 +27,7 @@ describe('Liven tests', () => {
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
@@ -35,7 +35,7 @@ describe('Liven tests', () => {
 		// Wait the page to refresh
 		await page.waitForNavigation( { waitUntil: 'load' } )
 
-		await expect( page.title()).resolves.toMatch( 'New title' );
+		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
 		write( file, content );
@@ -56,7 +56,7 @@ describe('Liven tests', () => {
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
@@ -64,7 +64,7 @@ describe('Liven tests', () => {
 		// Wait the page to refresh
 		await page.waitForNavigation( { waitUntil: 'load' } )
 
-		await expect( page.title()).resolves.toMatch( 'New title' );
+		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
 		write( file, content );
@@ -85,12 +85,12 @@ describe('Liven tests', () => {
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Undo the changes
 		write( file, content );
@@ -111,7 +111,7 @@ describe('Liven tests', () => {
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
@@ -119,14 +119,14 @@ describe('Liven tests', () => {
 		// Wait the page to refresh
 		await page.waitForNavigation( { waitUntil: 'load' } )
 
-		await expect( page.title()).resolves.toMatch( 'New title' );
+		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
 		write( file, content );
 
 	});
 
-	test('5. Current directory used when passing no parameters', async () => {
+	test('5. Refresh when a file is removed', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -134,57 +134,28 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
-
-		const server  = await liven();
-
-		await page.goto( 'http://localhost:' + server.port + '/test/05/' );
-
-		await expect( page.title()).resolves.toMatch( 'Old title' );
-
-		// Read and modify index.html to generate a refresh 
-		await write( file, content.replace( 'Old title', 'New title' ) );
-
-		// Wait the page to refresh
-		await page.waitForNavigation( { waitUntil: 'load' } )
-
-		await expect( page.title()).resolves.toMatch( 'New title' );
-
-		// Undo the changes
-		write( file, content );
-
-	});
-
-	test('6. Refresh when a file is removed', async () => {
-
-		// If this test failed previously, lets guarantee that
-		// everything is correct again before we begin
-		const file    = 'test/06/index.html'
-		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
-		await write( file, content );
-
-		const to_delete = 'test/06/delete_test'
+		const to_delete = 'test/05/delete_test'
 		// fs.closeSync( fs.openSync( to_delete, 'w' ) );
 		// await write( to_delete, 'delete test', 'utf8' );
 
 		await sleep( 90 )
 
-		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
+		const server  = await liven( { dir: 'test/05', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
-
-		// Generate a refresh deleting "delete_test"
-		await unlink( to_delete );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
 
+		// Generate a refresh deleting "delete_test"
+		await unlink( to_delete );
+
 		// Wait the page to refresh
 		await page.waitForNavigation( { waitUntil: 'load' } );
 
-		await expect( page.title()).resolves.toMatch( 'New title' );
+		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changess
 		write( file, content );
@@ -192,16 +163,16 @@ describe('Liven tests', () => {
 
 	});
 
-	test('7. Refresh when a file is created', async () => {
+	test('6. Refresh when a file is created', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
-		const file    = 'test/07/index.html'
+		const file    = 'test/06/index.html'
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
 		// Delete the file "create_test" if it exists
-		const to_create = 'test/07/create_test'
+		const to_create = 'test/06/create_test'
 
 		try {
 			await unlink( to_create );
@@ -211,11 +182,11 @@ describe('Liven tests', () => {
 
 		await sleep( 90 )
 
-		const server  = await liven( { dir: 'test/07', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
+		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
 		await page.goto( 'http://localhost:' + server.port );
 
-		await expect( page.title()).resolves.toMatch( 'Old title' );
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Read and modify index.html to generate a refresh 
 		await write( file, content.replace( 'Old title', 'New title' ) );
@@ -227,7 +198,7 @@ describe('Liven tests', () => {
 		// Wait the page to refresh
 		await page.waitForNavigation( { waitUntil: 'load' } );
 
-		await expect( page.title()).resolves.toMatch( 'New title' );
+		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changess
 		write( file, content );
@@ -236,6 +207,41 @@ describe('Liven tests', () => {
 		} catch ( error ) {
 		    // continue
 		}
+
+	});
+
+	test('7. Current dir used when passing no parameters', async () => {
+
+		const original_cwd = process.cwd();
+		process.chdir( 'test/07/' )
+
+		// If this test failed previously, lets guarantee that
+		// everything is correct again before we begin
+		const file    = 'index.html'
+		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
+		await write( file, content );
+
+		await sleep( 90 )
+
+
+
+		const server  = await liven();
+
+		await page.goto( 'http://localhost:' + server.port );
+
+		await expect( page.title() ).resolves.toMatch( 'Old title' );
+
+		// Read and modify index.html to generate a refresh 
+		await write( file, content.replace( 'Old title', 'New title' ) );
+
+		// Wait the page to refresh
+		await page.waitForNavigation( { waitUntil: 'load' } )
+
+		await expect( page.title() ).resolves.toMatch( 'New title' );
+
+		// Undo the changes
+		write( file, content );
+		process.chdir( original_cwd )
 
 	});
 
