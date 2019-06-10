@@ -20,14 +20,14 @@
 	</a>
 </div>
 
-<div align="center">Optimized and lightweight live reload library, without dependencies</div>
+<div align="center">Optimized and lightweight live reload library on 54kB, without dependencies</div>
 
 <br/>
 
 ## Features
 
 * Production version with **no dependencies**
-* Extremely lightweight - 55kB!
+* Extremely lightweight - 54kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
 * 100% tested and working on Linux, Mac and Windows!
@@ -47,14 +47,6 @@ $ npm install @alumna/liven
 
 ## Usage
 
-Add the reloader script on the main html file of your project:
-```html
-<script>
-	(new WebSocket("ws://"+((location.host||"localhost").split(":")[0]+(location.port?":"+location.port:"")))).onmessage=function(){return location.reload(!0)};
-</script>
-```
-
-And start your instance:
 ```js
 import liven from '@alumna/liven';
 
