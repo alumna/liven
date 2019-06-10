@@ -11,8 +11,6 @@ const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
 describe('Liven tests', () => {
 
-	jest.setTimeout( 4000 );
-
 	test('1. Refresh when file change', async () => {
 
 		// If this test failed previously, lets guarantee that
