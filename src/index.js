@@ -27,7 +27,7 @@ class Liven {
 		this.port = await getport( { port: this.options.port || getport.makeRange( 3000, 3100 ) } );
 
 		// Start servers
-		const { server, handler } = this.polka.listen( this.port )
+		const { server } = this.polka.listen( this.port )
 
 		// Bind the socket server on the http one
 		this.ws           = new WebSocket.Server( { server } );
