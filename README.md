@@ -27,8 +27,7 @@
 * Extremely lightweight - 55kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
-* Fully tested on Linux and Windows
-* Partially tested on Mac (contributions welcome!)
+* 100% tested and working on Linux, Mac and Windows!
 
 Additionally, this module is delivered as:
 
