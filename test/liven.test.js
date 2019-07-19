@@ -1,6 +1,7 @@
 import liven from './../src/index';
 
 import * as fs 				from 'fs';
+import http 				from 'http';
 import { promisify } 		from 'util';
 
 const read	  = promisify( fs.readFile );
@@ -133,6 +134,7 @@ describe('Liven tests', () => {
 		await write( file, content );
 
 		const to_delete = 'test/05/delete_test'
+		await write( to_delete, 'delete test', 'utf8' );
 		// fs.closeSync( fs.openSync( to_delete, 'w' ) );
 		// await write( to_delete, 'delete test', 'utf8' );
 
@@ -171,6 +173,11 @@ describe('Liven tests', () => {
 
 		// Delete the file "create_test" if it exists
 		const to_create = 'test/06/create_test'
+		try {
+			await unlink( to_create );
+		} catch ( error ) {
+		    // continue
+		}
 
 		try {
 			await unlink( to_create );
@@ -240,6 +247,34 @@ describe('Liven tests', () => {
 		// Undo the changes
 		write( file, content );
 		process.chdir( original_cwd )
+
+	});
+
+	test('8. Remap a diretory to another', async () => {
+
+		const server  = await liven({
+			dir: 'test/08',
+			alias: {
+				'images/': 'compressed/'
+			}
+		});
+
+		await page.goto( 'http://localhost:' + server.port + '/images/img.txt' );
+
+		await expect( page ).toMatch( 'compressed image' )
+
+	});
+
+	test('9. Don\'t inject code on non-existent index (404)"', async done => {
+
+		const server  = await liven( { dir: 'test/09' } );
+
+		http.get( 'http://localhost:' + server.port, response => {
+
+			expect( response.statusCode ).toBe( 404 );
+			done();
+
+		})
 
 	});
 
