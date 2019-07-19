@@ -1,4 +1,9 @@
-# Alumna changelog
+# Liven changelog
+
+## 1.2.0 - 2019-07-19
+
+* New feature: Alias
+* Replace Sirv with Pulsa
 
 ## 1.1.1 - 2019-06-10
 
