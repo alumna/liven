@@ -62,22 +62,26 @@ const instance = await liven({
 	port: 3000,
 
 	// (OPTIONAL)
-	// Javascript function (as string) to be runned when refreshing the page
-	// Defaults to: 'function( data ){ location.reload( true ) };'
+	// Run as a SPA, mapping non-existent URL's to [base]index.html
+	// Default to "false"
+	spa: false,
+
+	// (OPTIONAL)
+	// Function (as string) to be runned on the browser when receiving a socket signal
+	// Defaults to: 'function( data ){ location.reload( true ) };', that simply reloads the page
 	// `data` is an object: { path, isDir, isFile, isNew, add_or_update }
-	script: 'function( data ){ location.reload( true ) };'
+	script: 'function( data ){ location.reload( true ) };',
+
+	// (OPTIONAL)
+	// Mask paths to a different directory when requested
+	alias: {
+		'images'    : 'optimized'
+	},
 	
 	// (OPTIONAL)
 	// Function to be called on each event, before the refresh signal
 	// The function must return "true" to allow the refresh, of "false" to don't allow
 	on_event: ({ path, isDir, isFile, isNew, add_or_update }) => {...},
-
-	// (OPTIONAL)
-	// A function to decide whether a given file or directory should be watched.
-	// It's passed an object containing the file or directory's relative `path`` and its `stats`.
-	// It should return `true`` or `false`` (or a Promise resolving to one of those).
-	// Returning `false`` for a directory means that none of its contents will be watched.
-	filter: ({ path, stats }) => {...}
 	
 });
 
