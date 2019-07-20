@@ -20,7 +20,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/01' } );
 
@@ -49,7 +49,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/02', on_event: () => true } );
 
@@ -78,7 +78,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/03', on_event: () => false } );
 
@@ -104,7 +104,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/04', filter: () => true } );
 
@@ -138,7 +138,7 @@ describe('Liven tests', () => {
 		// fs.closeSync( fs.openSync( to_delete, 'w' ) );
 		// await write( to_delete, 'delete test', 'utf8' );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/05', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -185,7 +185,7 @@ describe('Liven tests', () => {
 		    // continue
 		}
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -226,7 +226,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 100 )
 
 
 
@@ -277,5 +277,37 @@ describe('Liven tests', () => {
 		})
 
 	});
+
+	test('10. Memory INDEX files', async () => {
+
+		const server = await liven( { dir: 'test/10' } );
+
+		await server.memory( 'index.html', '<html><body> Hello world in memory! </body></html>' )
+
+		// index.html
+		await page.goto( 'http://localhost:' + server.port );
+		await expect( page ).toMatch( 'Hello world in memory!' );
+		await sleep( 50 )
+
+
+		// Updating index.html
+		await server.memory( 'index.html', '<html><body> Hello UPDATED world in memory! </body></html>' )
+		await sleep( 50 )
+		await expect( page ).toMatch( 'Hello UPDATED world in memory!' );
+
+	});
+
+	test('11. Memory NON-INDEX files', async () => {
+
+		const server = await liven( { dir: 'test/11' } );
+
+		await server.memory( 'other.html', '<html><body> Hello other in memory! </body></html>' )
+
+		// other.html
+		await page.goto( 'http://localhost:' + server.port + '/other.html' );
+		await expect( page ).toMatch( 'Hello other in memory!' );
+
+	});
+
 
 });
