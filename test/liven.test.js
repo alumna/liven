@@ -12,7 +12,7 @@ const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
 describe('Liven tests', () => {
 
-	test('1. Refresh when file change', async () => {
+	test('1. Refresh when file change', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -20,7 +20,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/01' } );
 
@@ -37,11 +37,13 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
-		write( file, content );
+		await write( file, content );
+
+		done();
 
 	});
 
-	test('2. Refresh after "on_event" returning "true"', async () => {
+	test('2. Refresh after "on_event" returning "true"', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -49,7 +51,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/02', on_event: () => true } );
 
@@ -66,11 +68,13 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
-		write( file, content );
+		await write( file, content );
+
+		done();
 
 	});
 
-	test('3. Do not refresh after "on_event" returning "false"', async () => {
+	test('3. Do not refresh after "on_event" returning "false"', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -78,7 +82,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/03', on_event: () => false } );
 
@@ -92,11 +96,13 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'Old title' );
 
 		// Undo the changes
-		write( file, content );
+		await write( file, content );
+
+		done();
 
 	});
 
-	test('4. Refresh when file change, with a filter on watcher', async () => {
+	test('4. Refresh when file change, with a filter on watcher', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -104,7 +110,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/04', filter: () => true } );
 
@@ -121,11 +127,13 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
-		write( file, content );
+		await write( file, content );
+
+		done();
 
 	});
 
-	test('5. Refresh when a file is removed', async () => {
+	test('5. Refresh when a file is removed', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -138,7 +146,7 @@ describe('Liven tests', () => {
 		// fs.closeSync( fs.openSync( to_delete, 'w' ) );
 		// await write( to_delete, 'delete test', 'utf8' );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/05', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -158,12 +166,14 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changess
-		write( file, content );
-		write( to_delete, 'delete test', 'utf8' );
+		await write( file, content );
+		await write( to_delete, 'delete test', 'utf8' );
+
+		done();
 
 	});
 
-	test('6. Refresh when a file is created', async () => {
+	test('6. Refresh when a file is created', async ( done ) => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -185,7 +195,7 @@ describe('Liven tests', () => {
 		    // continue
 		}
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 		const server  = await liven( { dir: 'test/06', filter: ( { path } ) => { return path == 'index.html' ? false : true } } );
 
@@ -201,21 +211,24 @@ describe('Liven tests', () => {
 		await write( to_create, 'create test', 'utf8' );
 
 		// Wait the page to refresh
+		// await sleep( 130 )
 		await page.waitForNavigation( { waitUntil: 'load' } );
 
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changess
-		write( file, content );
+		await write( file, content );
 		try {
 			await unlink( to_create );
 		} catch ( error ) {
 		    // continue
 		}
 
+		done();
+
 	});
 
-	test('7. Current dir used when passing no parameters', async () => {
+	test('7. Current dir used when passing no parameters', async ( done ) => {
 
 		const original_cwd = process.cwd();
 		process.chdir( 'test/07/' )
@@ -226,7 +239,7 @@ describe('Liven tests', () => {
 		const content = ( await read( file, 'utf8' ) ).replace( 'New title', 'Old title' );
 		await write( file, content );
 
-		await sleep( 90 )
+		await sleep( 130 )
 
 
 
@@ -245,12 +258,14 @@ describe('Liven tests', () => {
 		await expect( page.title() ).resolves.toMatch( 'New title' );
 
 		// Undo the changes
-		write( file, content );
+		await write( file, content );
 		process.chdir( original_cwd )
+
+		done();
 
 	});
 
-	test('8. Remap a diretory to another', async () => {
+	test('8. Remap a diretory to another', async ( done ) => {
 
 		const server  = await liven({
 			dir: 'test/08',
@@ -259,9 +274,13 @@ describe('Liven tests', () => {
 			}
 		});
 
+		await sleep( 130 )
+
 		await page.goto( 'http://localhost:' + server.port + '/images/img.txt' );
 
 		await expect( page ).toMatch( 'compressed image' )
+
+		done();
 
 	});
 
@@ -276,6 +295,44 @@ describe('Liven tests', () => {
 
 		})
 
+		done();
+
 	});
+
+	test('10. Memory INDEX files', async ( done ) => {
+
+		const server = await liven( { dir: 'test/10' } );
+
+		await server.memory( 'index.html', '<html><body> Hello world in memory! </body></html>' )
+
+		// index.html
+		await page.goto( 'http://localhost:' + server.port );
+		await expect( page ).toMatch( 'Hello world in memory!' );
+		await sleep( 130 )
+
+
+		// Updating index.html
+		await server.memory( 'index.html', '<html><body> Hello UPDATED world in memory! </body></html>' )
+		await sleep( 130 )
+		await expect( page ).toMatch( 'Hello UPDATED world in memory!' );
+
+		done();
+
+	});
+
+	test('11. Memory NON-INDEX files', async ( done ) => {
+
+		const server = await liven( { dir: 'test/11' } );
+
+		await server.memory( 'other.html', '<html><body> Hello other in memory! </body></html>' )
+
+		// other.html
+		await page.goto( 'http://localhost:' + server.port + '/other.html' );
+		await expect( page ).toMatch( 'Hello other in memory!' );
+
+		done();
+
+	});
+
 
 });

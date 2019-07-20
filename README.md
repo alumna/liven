@@ -27,7 +27,7 @@
 ## Features
 
 * Production version with **no dependencies**
-* Extremely lightweight - 54kB!
+* Extremely lightweight - 59kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
 * 100% tested and working on Linux, Mac and Windows!
@@ -87,6 +87,18 @@ const instance = await liven({
 
 // You can programatically force a refresh as well
 instance.refresh({ path, isDir, isFile, add_or_update, isNew })
+
+
+// Create a memory-file on the server
+// "content" can be a string or a buffer
+// -
+// Path must be a fullpath or initiate without a slash ('/') when relative
+// Will generate a refresh unless "on_event" function returns "false" for the path
+// -
+// It will be instantly available in all modes, including:
+// SPA, index.html served on dir URL's, updating 404 files, etc
+await instance.memory( path, content )
+
 
 // And get the port used
 console.log( instance.port ) // 3000

@@ -70,19 +70,46 @@ class Liven {
 
 		const data = { path: args.path, isDir: args.stats.isDirectory(), isFile: args.stats.isFile(), add_or_update, isNew: args.isNew ? true : false }
 
-		if ( typeof this.options.on_event === 'function' && !( await this.options.on_event( data ) ) )
-			return ;
-		
-		this.refresh( data )
+		this.check_on_event( data )
 
 	}
 
-	inject () {
+	memory ( path, content ) {
 
-		if ( fs.existsSync( this.index ) ) {
+		path = resolve( this.options.dir, path )
 
-			let content 	= fs.readFileSync( this.index , 'utf8' );
-			content 		= content.replace( '<body>', '<body>' + this.options.script )
+		if ( path == this.index )
+			this.inject( content );
+		else
+			pulsa.memory( path, content )
+
+		const data = {
+			path: path.slice( this.index.length ),
+			isDir: false,
+			isFile: true,
+			add_or_update: true,
+			isNew: true
+		}
+
+		return this.check_on_event( data )
+
+	}
+
+	async check_on_event ( data ) {
+
+		if ( typeof this.options.on_event === 'function' && !( await this.options.on_event( data ) ) )
+			return;
+		
+		return this.refresh( data );
+
+	}
+
+	inject ( content ) {
+
+		if ( content || fs.existsSync( this.index ) ) {
+
+			content = content || fs.readFileSync( this.index , 'utf8' );
+			content = content.replace( '<body>', '<body>' + this.options.script )
 
 			pulsa.memory( this.index, content )
 
