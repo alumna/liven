@@ -1,5 +1,9 @@
 # Liven changelog
 
+## 1.3.0 - 2019-07-19
+
+* New feature: In-memory files
+
 ## 1.2.0 - 2019-07-19
 
 * New feature: Alias
