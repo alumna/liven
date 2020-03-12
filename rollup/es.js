@@ -5,7 +5,7 @@ import { terser } 		from 'rollup-plugin-terser';
 export default {
 	input: 'src/index.js',
 
-	external: [ 'crypto', 'events', 'fs', 'http', 'https', 'net', 'os', 'path', 'querystring', 'stream', 'tls', 'url', 'util', 'zlib' ],
+	external: [ 'bufferutil', 'crypto', 'events', 'fs', 'http', 'https', 'net', 'os', 'path', 'querystring', 'stream', 'tls', 'url', 'utf-8-validate', 'util', 'zlib' ],
 
 	output: {
 		file: 'dist/liven.es.js',
