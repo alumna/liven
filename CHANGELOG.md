@@ -1,5 +1,9 @@
 # Liven changelog
 
+## 1.3.1 - 2020-03-12
+
+* Updated devDependencies
+
 ## 1.3.0 - 2019-07-19
 
 * New feature: In-memory files
