@@ -27,7 +27,7 @@
 ## Features
 
 * Production version with **no dependencies**
-* Extremely lightweight - 59kB!
+* Extremely lightweight - 52kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
 * 100% tested and working on Linux, Mac and Windows!
