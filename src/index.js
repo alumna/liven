@@ -75,21 +75,21 @@ class Liven {
 
 	}
 
-	async memory ( path, content ) {
+	async memory ( path, content, clear = false ) {
 
 		path = resolve( this.options.dir, path )
 
 		if ( path == this.index )
 			this.inject( content );
 		else
-			pulsa.memory( path, content )
+			clear ? pulsa.clear( path ) : pulsa.memory( path, content )
 
 		const data = {
 			path: path.slice( this.options.dir ),
 			isDir: false,
 			isFile: true,
-			add_or_update: true,
-			isNew: true
+			add_or_update: !clear,
+			isNew: !clear
 		}
 
 		return this.check_on_event( data )
@@ -98,21 +98,7 @@ class Liven {
 
 	async clear ( path ) {
 
-		path = resolve( this.options.dir, path )
-
-		pulsa.clear( path )
-
-		if ( path === this.index ) this.inject();
-
-		const data = {
-			path: path.slice( this.options.dir ),
-			isDir: false,
-			isFile: true,
-			add_or_update: false,
-			isNew: false
-		}
-
-		return this.check_on_event( data )
+		return this.memory( path, null, true )
 
 	}
 
