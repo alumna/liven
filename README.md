@@ -90,6 +90,8 @@ instance.refresh({ path, isDir, isFile, add_or_update, isNew })
 
 
 // Create a memory-file on the server
+// It overwrites the file on the same path, if it exists, on future requests
+// -
 // "content" can be a string or a buffer
 // -
 // Path must be a fullpath or initiate without a slash ('/') when relative
@@ -98,6 +100,18 @@ instance.refresh({ path, isDir, isFile, add_or_update, isNew })
 // It will be instantly available in all modes, including:
 // SPA, index.html served on dir URL's, updating 404 files, etc
 await instance.memory( path, content )
+
+// Clear a memory-file on the server
+// -
+// If a file exists on the same path on disk,
+// its original content will be served again on future requests
+// -
+// As on 'memory' feature:
+// Path must be a fullpath or initiate without a slash ('/') when relative
+// Will generate a refresh unless "on_event" function returns "false" for the path
+// -
+// The effect will be instantly available in all modes
+await instance.clear( path )
 
 
 // And get the port used
