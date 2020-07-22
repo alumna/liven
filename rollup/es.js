@@ -14,11 +14,13 @@ export default {
 
 	plugins: [
 
-		nodeResolve( {
+		nodeResolve({
 			preferBuiltins: true
-		} ),
+		}),
 
-		commonjs(),
+		commonjs({
+			ignore: [ 'bufferutil', 'utf-8-validate' ]
+		}),
 
 		terser()
 

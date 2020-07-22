@@ -303,18 +303,28 @@ describe('Liven tests', () => {
 
 		const server = await liven( { dir: 'test/10' } );
 
-		await server.memory( 'index.html', '<html><body> Hello world in memory! </body></html>' )
-
-		// index.html
+		// index.html from the disk
 		await page.goto( 'http://localhost:' + server.port );
-		await expect( page ).toMatch( 'Hello world in memory!' );
+		await expect( page ).toMatch( 'Hello world in the disk' );
 		await sleep( 130 )
 
+		// index.html from memory
+		await server.memory( 'index.html', '<html><body> Hello world in memory! </body></html>' )
+		await sleep( 130 )
+		// await page.goto( 'http://localhost:' + server.port );
+		await expect( page ).toMatch( 'Hello world in memory!' );
 
-		// Updating index.html
+
+		// Updating index.html from memory
 		await server.memory( 'index.html', '<html><body> Hello UPDATED world in memory! </body></html>' )
 		await sleep( 130 )
 		await expect( page ).toMatch( 'Hello UPDATED world in memory!' );
+
+
+		// Clearing index.html, reading from the disk
+		await server.clear( 'index.html' )
+		await sleep( 130 )
+		await expect( page ).toMatch( 'Hello world in the disk' );
 
 		done();
 
@@ -324,11 +334,25 @@ describe('Liven tests', () => {
 
 		const server = await liven( { dir: 'test/11' } );
 
-		await server.memory( 'other.html', '<html><body> Hello other in memory! </body></html>' )
+		// index.html from the disk
+		await page.goto( 'http://localhost:' + server.port + '/other.html' );
+		await sleep( 130 )
+		await expect( page ).toMatch( 'Hello other in the disk' );
 
 		// other.html
-		await page.goto( 'http://localhost:' + server.port + '/other.html' );
+		await server.memory( 'other.html', '<html><body> Hello other in memory! </body><script type="text/javascript">(new WebSocket("ws://"+(location.host))).onmessage=function( args ){ location.reload( true ) };</script></html>' )
+		await sleep( 130 )
 		await expect( page ).toMatch( 'Hello other in memory!' );
+
+		// Updating other.html
+		await server.memory( 'other.html', '<html><body> Hello other UPDATED in memory! </body><script type="text/javascript">(new WebSocket("ws://"+(location.host))).onmessage=function( args ){ location.reload( true ) };</script></html>' )
+		await sleep( 130 )
+		await expect( page ).toMatch( 'Hello other UPDATED in memory!' );
+
+		// Clearing other.html, reading from the disk
+		await server.clear( 'other.html' )
+		await sleep( 130 )
+		await expect( page ).toMatch( 'Hello other in the disk' );
 
 		done();
 

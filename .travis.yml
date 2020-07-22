@@ -5,8 +5,9 @@ os:
 language: node_js
 install:
   - npm ci
-  - npm install -g codecov
+  - npm install -g codecov coveralls
 node_js:
   - "node"
 after_script:
   - codecov
+  - cat ./coverage/lcov.info | coveralls

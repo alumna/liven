@@ -2,7 +2,7 @@ import CheapWatch 			from 'cheap-watch';
 import { createServer } 	from 'http';
 import getport				from 'get-port';
 import { join, resolve }	from 'path';
-import pulsa				from '@alumna/pulsa';
+import * as pulsa			from '@alumna/pulsa';
 import WebSocket			from 'ws';
 
 import * as fs 				from 'fs';
@@ -26,6 +26,7 @@ class Liven {
 
 	async start () {
 
+		// Inject the refresh function before serving the content
 		this.inject();
 
 		// Get an available port to run
@@ -74,24 +75,30 @@ class Liven {
 
 	}
 
-	memory ( path, content ) {
+	async memory ( path, content, clear = false ) {
 
 		path = resolve( this.options.dir, path )
 
 		if ( path == this.index )
 			this.inject( content );
 		else
-			pulsa.memory( path, content )
+			clear ? pulsa.clear( path ) : pulsa.memory( path, content )
 
 		const data = {
-			path: path.slice( this.index.length ),
+			path: path.slice( this.options.dir ),
 			isDir: false,
 			isFile: true,
-			add_or_update: true,
-			isNew: true
+			add_or_update: !clear,
+			isNew: !clear
 		}
 
 		return this.check_on_event( data )
+
+	}
+
+	async clear ( path ) {
+
+		return this.memory( path, null, true )
 
 	}
 
@@ -104,6 +111,8 @@ class Liven {
 
 	}
 
+	// This function *is necessary* to inject the refresh function
+	// that will receive the signal from socket
 	inject ( content ) {
 
 		if ( content || fs.existsSync( this.index ) ) {
