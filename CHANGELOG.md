@@ -1,5 +1,10 @@
 # Liven changelog
 
+## 1.4.0 - 2020-07-22
+
+* Added the feature to clear previously added in-memory files
+* Updated devDependencies
+
 ## 1.3.1 - 2020-03-12
 
 * Updated devDependencies
@@ -11,7 +16,7 @@
 ## 1.2.0 - 2019-07-19
 
 * New feature: Alias
-* Replace Sirv with Pulsa
+* Replace Sirv/Polka with Pulsa
 
 ## 1.1.1 - 2019-06-10
 
