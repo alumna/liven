@@ -9,16 +9,19 @@ export default {
 
 	output: {
 		file: 'dist/liven.cjs.js',
+		exports: 'auto',
 		format: 'cjs'
 	},
 
 	plugins: [
 
-		nodeResolve( {
+		nodeResolve({
 			preferBuiltins: true
-		} ),
+		}),
 
-		commonjs(),
+		commonjs({
+			ignore: [ 'bufferutil', 'utf-8-validate' ]
+		}),
 
 		terser()
 
