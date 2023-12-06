@@ -6,12 +6,6 @@
 	<a href="https://npmjs.org/package/@alumna/liven">
 		<img src="https://badgen.now.sh/npm/v/@alumna/liven" alt="version" />
 	</a>
-	<a href="https://npmjs.org/package/@alumna/liven">
-		<img src="https://badgen.net/bundlephobia/min/@alumna/liven" alt="size" />
-	</a>
-	<a href="https://travis-ci.org/alumna/liven">
-		<img src="https://travis-ci.org/alumna/liven.svg?branch=master" alt="travis" />
-	</a>
 	<a href="https://codecov.io/gh/alumna/liven">
 		<img src="https://codecov.io/gh/alumna/liven/branch/master/graph/badge.svg" />
 	</a>
@@ -20,13 +14,13 @@
 	</a>
 </div>
 
-<div align="center">Optimized and lightweight live reload library on 64kB, without dependencies</div>
+<div align="center">Optimized and lightweight live reload library on 64kB, without dependencies on runtime version</div>
 
 <br/>
 
 ## Features
 
-* Production version with **no dependencies**
+* Runtime version with **no dependencies**
 * Extremely lightweight - 64kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
