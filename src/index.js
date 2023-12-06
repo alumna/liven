@@ -1,11 +1,11 @@
-import CheapWatch 			from 'cheap-watch';
-import { createServer } 	from 'http';
-import getport				from 'get-port';
-import { join, resolve }	from 'path';
-import * as pulsa			from '@alumna/pulsa';
-import WebSocket			from 'ws';
+import CheapWatch 						from 'cheap-watch';
+import { createServer } 				from 'http';
+import getport							from 'get-port';
+import { join, resolve }				from 'path';
+import * as pulsa						from '@alumna/pulsa';
+import WebSocket, { WebSocketServer }	from 'ws';
 
-import * as fs 				from 'fs';
+import * as fs 							from 'fs';
 
 class Liven {
 
@@ -36,7 +36,7 @@ class Liven {
 		this.server.listen( this.port )
 
 		// Bind the socket server on the http one
-		this.ws           = new WebSocket.Server( { server: this.server } );
+		this.ws           = new WebSocketServer( { server: this.server } );
 		this.connections  = []
 
 		// Add every new connection to the pool

@@ -20,22 +20,21 @@
 	</a>
 </div>
 
-<div align="center">Optimized and lightweight live reload library on 54kB, without dependencies</div>
+<div align="center">Optimized and lightweight live reload library on 64kB, without dependencies</div>
 
 <br/>
 
 ## Features
 
 * Production version with **no dependencies**
-* Extremely lightweight - 52kB!
+* Extremely lightweight - 64kB!
 * Alternative to `browser-sync` and `livereload`
 * Excellent option to be used inside other libraries
 * 100% tested and working on Linux, Mac and Windows!
 
-Additionally, this module is delivered as:
+This module is delivered as an ES Module:
 
-* **ES Module**: [`dist/liven.es.js`](https://unpkg.com/@alumna/liven/dist/liven.es.js)
-* **CommonJS**: [`dist/liven.cjs.js`](https://unpkg.com/@alumna/liven/dist/liven.cjs.js)
+* **ES Module**: [`dist/liven.js`](https://unpkg.com/@alumna/liven/dist/liven.js)
 
 
 ## Install
