@@ -4,15 +4,24 @@ import * as fs 				from 'fs';
 import http 				from 'http';
 import { promisify } 		from 'util';
 
+import puppeteer 			from 'puppeteer';
+
 const read	  = promisify( fs.readFile );
 const unlink  = promisify( fs.unlink );
 const write	  = promisify( fs.writeFile );
 
 const sleep = ms => new Promise( resolve => setTimeout( resolve, ms ) );
 
+let browser, page;
+
+beforeAll(async () => {
+	browser = await puppeteer.launch({ headless: "new" });
+	page = await browser.newPage();
+});
+
 describe('Liven tests', () => {
 
-	test('1. Refresh when file change', async ( done ) => {
+	test('1. Refresh when file change', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -39,11 +48,11 @@ describe('Liven tests', () => {
 		// Undo the changes
 		await write( file, content );
 
-		done();
+		
 
 	});
 
-	test('2. Refresh after "on_event" returning "true"', async ( done ) => {
+	test('2. Refresh after "on_event" returning "true"', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -70,11 +79,9 @@ describe('Liven tests', () => {
 		// Undo the changes
 		await write( file, content );
 
-		done();
-
 	});
 
-	test('3. Do not refresh after "on_event" returning "false"', async ( done ) => {
+	test('3. Do not refresh after "on_event" returning "false"', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -98,11 +105,9 @@ describe('Liven tests', () => {
 		// Undo the changes
 		await write( file, content );
 
-		done();
-
 	});
 
-	test('4. Refresh when file change, with a filter on watcher', async ( done ) => {
+	test('4. Refresh when file change, with a filter on watcher', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -129,11 +134,9 @@ describe('Liven tests', () => {
 		// Undo the changes
 		await write( file, content );
 
-		done();
-
 	});
 
-	test('5. Refresh when a file is removed', async ( done ) => {
+	test('5. Refresh when a file is removed', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -169,11 +172,9 @@ describe('Liven tests', () => {
 		await write( file, content );
 		await write( to_delete, 'delete test', 'utf8' );
 
-		done();
-
 	});
 
-	test('6. Refresh when a file is created', async ( done ) => {
+	test('6. Refresh when a file is created', async () => {
 
 		// If this test failed previously, lets guarantee that
 		// everything is correct again before we begin
@@ -224,11 +225,9 @@ describe('Liven tests', () => {
 		    // continue
 		}
 
-		done();
-
 	});
 
-	test('7. Current dir used when passing no parameters', async ( done ) => {
+	test('7. Current dir used when passing no parameters', async () => {
 
 		const original_cwd = process.cwd();
 		process.chdir( 'test/07/' )
@@ -240,8 +239,6 @@ describe('Liven tests', () => {
 		await write( file, content );
 
 		await sleep( 130 )
-
-
 
 		const server  = await liven();
 
@@ -261,11 +258,9 @@ describe('Liven tests', () => {
 		await write( file, content );
 		process.chdir( original_cwd )
 
-		done();
-
 	});
 
-	test('8. Remap a diretory to another', async ( done ) => {
+	test('8. Remap a diretory to another', async () => {
 
 		const server  = await liven({
 			dir: 'test/08',
@@ -275,88 +270,81 @@ describe('Liven tests', () => {
 		});
 
 		await sleep( 130 )
-
 		await page.goto( 'http://localhost:' + server.port + '/images/img.txt' );
-
-		await expect( page ).toMatch( 'compressed image' )
-
-		done();
+		await expect( await page.content() ).toMatch( 'compressed image' )
 
 	});
 
-	test('9. Don\'t inject code on non-existent index (404)"', async done => {
+	test('9. Don\'t inject code on non-existent index (404)"', done => {
 
-		const server  = await liven( { dir: 'test/09' } );
+		liven( { dir: 'test/09' } ).then( server => {
 
-		http.get( 'http://localhost:' + server.port, response => {
-
-			expect( response.statusCode ).toBe( 404 );
-			done();
+			http.get( 'http://localhost:' + server.port, response => {
+				expect( response.statusCode ).toBe( 404 );
+				done();
+			})
 
 		})
-
-		done();
-
 	});
 
-	test('10. Memory INDEX files', async ( done ) => {
+	test('10. Memory INDEX files', async () => {
 
 		const server = await liven( { dir: 'test/10' } );
 
 		// index.html from the disk
 		await page.goto( 'http://localhost:' + server.port );
-		await expect( page ).toMatch( 'Hello world in the disk' );
+		await expect( await page.content() ).toMatch( 'Hello world in the disk' );
 		await sleep( 130 )
 
 		// index.html from memory
 		await server.memory( 'index.html', '<html><body> Hello world in memory! </body></html>' )
 		await sleep( 130 )
 		// await page.goto( 'http://localhost:' + server.port );
-		await expect( page ).toMatch( 'Hello world in memory!' );
+		await expect( await page.content() ).toMatch( 'Hello world in memory!' );
 
 
 		// Updating index.html from memory
 		await server.memory( 'index.html', '<html><body> Hello UPDATED world in memory! </body></html>' )
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello UPDATED world in memory!' );
+		await expect( await page.content() ).toMatch( 'Hello UPDATED world in memory!' );
 
 
 		// Clearing index.html, reading from the disk
 		await server.clear( 'index.html' )
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello world in the disk' );
-
-		done();
+		await expect( await page.content() ).toMatch( 'Hello world in the disk' );
 
 	});
 
-	test('11. Memory NON-INDEX files', async ( done ) => {
+	test('11. Memory NON-INDEX files', async () => {
 
 		const server = await liven( { dir: 'test/11' } );
 
 		// index.html from the disk
 		await page.goto( 'http://localhost:' + server.port + '/other.html' );
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello other in the disk' );
+		await expect( await page.content() ).toMatch( 'Hello other in the disk' );
 
 		// other.html
 		await server.memory( 'other.html', '<html><body> Hello other in memory! </body><script type="text/javascript">(new WebSocket("ws://"+(location.host))).onmessage=function( args ){ location.reload( true ) };</script></html>' )
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello other in memory!' );
+		await expect( await page.content() ).toMatch( 'Hello other in memory!' );
 
 		// Updating other.html
 		await server.memory( 'other.html', '<html><body> Hello other UPDATED in memory! </body><script type="text/javascript">(new WebSocket("ws://"+(location.host))).onmessage=function( args ){ location.reload( true ) };</script></html>' )
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello other UPDATED in memory!' );
+		await expect( await page.content() ).toMatch( 'Hello other UPDATED in memory!' );
 
 		// Clearing other.html, reading from the disk
 		await server.clear( 'other.html' )
 		await sleep( 130 )
-		await expect( page ).toMatch( 'Hello other in the disk' );
-
-		done();
+		await expect( await page.content() ).toMatch( 'Hello other in the disk' );
 
 	});
 
 
+});
+
+afterAll(async () => {
+	await browser.close();
 });
